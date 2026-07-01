@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram AI Analyzer</title>
+<link rel="icon" type="image/svg+xml" href="/vite.svg">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="header">
+  <span class="ig-logo">📸</span>
+  <h1>Instagram AI Analyzer</h1>
+  <p>Prasmotrni oshirish uchun AI tahlil · <span class="ai-badge">✦ AI</span></p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('post')">📊 Post Tahlil</div>
+  <div class="tab" onclick="switchTab('caption')">✍️ Caption</div>
+  <div class="tab" onclick="switchTab('hashtag')">🔖 Hashtag</div>
+  <div class="tab" onclick="switchTab('reel')">🎬 Reel Fix</div>
+  <div class="tab" onclick="switchTab('time')">⏰ Vaqt</div>
+</div>
+
+<div id="tab-post" class="section active">
+  <div class="section-header">📊 Post Tahlili</div>
+  <div class="info-box">
+    Post ma'lumotlarini kiriting — AI sizning kontentingizni baholab, nima yaxshi, nima yomon ekanini aytadi va yaxshilash yo'llarini ko'rsatadi.
+  </div>
+  <div class="card">
+    <div class="card-title">📹 Kontent haqida</div>
+    <label>Kontent turi</label>
+    <select id="p-type">
+      <option value="reel">🎬 Reel (video)</option>
+      <option value="photo">🖼️ Foto</option>
+      <option value="carousel">🎠 Carousel (ko'p rasm)</option>
+      <option value="story">📖 Story</option>
+    </select>
+    <label>Niche / Mavzu</label>
+    <input id="p-niche" type="text" placeholder="masalan: tech, lifestyle, fitness, musiqa...">
+    <label>Caption (yozgan matningiz)</label>
+    <textarea id="p-caption" placeholder="Postingizga yozgan caption matni..."></textarea>
+    <label>Hashtaglar (ishlatganlaringiz)</label>
+    <textarea id="p-hashtags" placeholder="#hashtag1 #hashtag2 ..." style="min-height:60px"></textarea>
+  </div>
+  <div class="card">
+    <div class="card-title">📈 Statistika</div>
+    <label>Necha follower bor?</label>
+    <input id="p-followers" type="number" placeholder="masalan: 1200">
+    <label>Bu postda necha view/impression?</label>
+    <input id="p-views" type="number" placeholder="masalan: 340">
+    <label>Like soni</label>
+    <input id="p-likes" type="number" placeholder="masalan: 45">
+    <label>Comment soni</label>
+    <input id="p-comments" type="number" placeholder="masalan: 8">
+    <label>Qachon post qildingiz?</label>
+    <select id="p-time">
+      <option value="morning">Ertalab (07:00–10:00)</option>
+      <option value="noon">Tushda (12:00–14:00)</option>
+      <option value="evening">Kechqurun (18:00–21:00)</option>
+      <option value="night">Kechasi (22:00–02:00)</option>
+      <option value="other">Boshqa vaqt</option>
+    </select>
+    <label>Qo'shimcha muammo yoki savol (ixtiyoriy)</label>
+    <input id="p-problem" type="text" placeholder="masalan: view juda kam, follower o'smayapti...">
+  </div>
+  <button class="btn-primary" id="analyzeBtn" onclick="analyzePost()">✦ AI Tahlil Qil</button>
+  <div class="result-box visible" id="post-result" style="display:none; margin-top:16px;">
+    <div class="stream-text" id="post-result-text"></div>
+  </div>
+</div>
+
+<div id="tab-caption" class="section">
+  <div class="section-header">✍️ Caption Generatsiya</div>
+  <div class="info-box">
+    Postingiz haqida ma'lumot bering — AI engagement oshiradigan, CTA (call-to-action) li professional caption yozib beradi.
+  </div>
+  <div class="card">
+    <div class="card-title">📝 Caption uchun ma'lumot</div>
+    <label>Post nima haqida?</label>
+    <textarea id="c-topic" placeholder="masalan: yangi laptop sotib oldim, fitness workout videom, safardan rasm..."></textarea>
+    <label>Niche / soha</label>
+    <input id="c-niche" type="text" placeholder="tech, lifestyle, travel, food, fitness...">
+    <label>Ton / ohang</label>
+    <select id="c-tone">
+      <option value="funny">😄 Kulgili / Casual</option>
+      <option value="motivational">💪 Motivatsion</option>
+      <option value="professional">👔 Professional</option>
+      <option value="storytelling">📖 Hikoya / Story</option>
+      <option value="educational">📚 Ta'limiy</option>
+    </select>
+    <label>Til</label>
+    <select id="c-lang">
+      <option value="uz">🇺🇿 O'zbekcha</option>
+      <option value="en">🇺🇸 Inglizcha</option>
+      <option value="mix">🔀 O'zbek + Ingliz aralash</option>
+    </select>
+    <label>CTA (maqsad)</label>
+    <select id="c-cta">
+      <option value="follow">Follow qilishga undash</option>
+      <option value="comment">Comment yozdirish</option>
+      <option value="save">Postni save qildirish</option>
+      <option value="share">Share qildirish</option>
+      <option value="visit">Bio linkka o'tkazish</option>
+    </select>
+  </div>
+  <button class="btn-primary" onclick="generateCaption()">✦ Caption Yarat</button>
+  <div id="caption-result" style="display:none; margin-top:14px;">
+    <div class="card-title" style="margin-bottom:8px;">✅ Tayyor Caption</div>
+    <div class="caption-box">
+      <button class="copy-btn" onclick="copyCaption()">Nusxa</button>
+      <div id="caption-text" class="stream-text"></div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-hashtag" class="section">
+  <div class="section-header">🔖 Hashtag Strategiyasi</div>
+  <div class="info-box">
+    Niche va postingiz haqida ma'lumot bering — AI reach oshiradigan to'g'ri hashtaglar generatsiya qiladi: kichik, o'rta va katta.
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 Hashtag sozlamalari</div>
+    <label>Postingiz nima haqida?</label>
+    <textarea id="h-topic" placeholder="masalan: Python dasturlash kursi haqida reel..."></textarea>
+    <label>Niche</label>
+    <input id="h-niche" type="text" placeholder="tech, fitness, beauty, food, travel...">
+    <label>Maqsad auditoriya</label>
+    <select id="h-audience">
+      <option value="uz">O'zbekistonliklar</option>
+      <option value="global">Global (dunyo bo'yicha)</option>
+      <option value="both">Ikkalasi</option>
+    </select>
+    <label>Kontent turi</label>
+    <select id="h-type">
+      <option value="reel">Reel</option>
+      <option value="photo">Foto post</option>
+      <option value="carousel">Carousel</option>
+    </select>
+  </div>
+  <button class="btn-primary" onclick="generateHashtags()">✦ Hashtaglar Topish</button>
+  <div id="hashtag-result" style="display:none; margin-top:14px;">
+    <div class="card-title" style="margin-bottom:4px;">🔥 Tavsiya etilgan hashtaglar</div>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">Bosib nusxa olish. "Barchasini ko'chirish" tugmasi bilan hammani olish mumkin.</p>
+    <div id="hashtag-pills" class="hashtag-container"></div>
+    <button class="copy-all-btn" onclick="copyAllHashtags()">📋 Barchasini ko'chirish</button>
+    <div style="margin-top:12px;" id="hashtag-tips" class="stream-text"></div>
+  </div>
+</div>
+
+<div id="tab-reel" class="section">
+  <div class="section-header">🎬 Reel Muammolari</div>
+  <div class="info-box">
+    Reeling nima muammo ekanini aytib bering — AI qanday tuzatish kerakligini, qanday edit qilish kerakligini tushuntiradi. Agar caption yoki hashtag noto'g'ri bo'lsa, to'g'rilab beradi.
+  </div>
+  <div class="card">
+    <div class="card-title">🎬 Reel haqida</div>
+    <label>Reel nima haqida?</label>
+    <textarea id="r-topic" placeholder="masalan: workout routine ko'rsatadigan 30 soniyalik reel..."></textarea>
+    <label>Necha sekundlik?</label>
+    <select id="r-duration">
+      <option value="15">15 soniya</option>
+      <option value="30">30 soniya</option>
+      <option value="60">60 soniya</option>
+      <option value="90">90 soniya</option>
+    </select>
+    <label>Hozirgi caption (agar bo'lsa)</label>
+    <textarea id="r-caption" placeholder="Hozir ishlatayotgan caption..."></textarea>
+    <label>Hozirgi hashtaglar (agar bo'lsa)</label>
+    <textarea id="r-hashtags" placeholder="#hashtag1 #hashtag2 ..." style="min-height:50px"></textarea>
+    <label>Asosiy muammo nima?</label>
+    <select id="r-problem">
+      <option value="low-views">View/impression kam</option>
+      <option value="no-reach">Reach yo'q (faqat followers ko'ryapti)</option>
+      <option value="no-engagement">Like/comment yo'q</option>
+      <option value="algorithm">Algorithm ko'rsatmayapti</option>
+      <option value="general">Umumiy yaxshilash</option>
+    </select>
+    <label>Qo'shimcha tushuntirish</label>
+    <textarea id="r-extra" placeholder="boshqa nima aytmoqchisiz..."></textarea>
+  </div>
+  <button class="btn-primary" onclick="fixReel()">✦ Reelni Tuzat + Yangi Caption & Hashtag</button>
+  <div id="reel-result" style="display:none; margin-top:14px;">
+    <div class="stream-text" id="reel-result-text"></div>
+  </div>
+</div>
+
+<div id="tab-time" class="section">
+  <div class="section-header">⏰ Eng Yaxshi Vaqtlar</div>
+  <div class="card">
+    <div class="card-title">🇺🇿 O'zbekiston – Instagram eng faol vaqtlar</div>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">Instagram algoritmiga ko'ra dastlabki 1 soatdagi engagement juda muhim.</p>
+    <div class="time-grid">
+      <div class="time-slot best">
+        <div class="time-slot-time">19:00–21:00</div>
+        <div class="time-slot-day">Har kun</div>
+        <div style="font-size:10px; color:var(--gold); margin-top:3px;">🔥 ENG YAXSHI</div>
+      </div>
+      <div class="time-slot best">
+        <div class="time-slot-time">12:00–14:00</div>
+        <div class="time-slot-day">Har kun</div>
+        <div style="font-size:10px; color:var(--gold); margin-top:3px;">🔥 YAXSHI</div>
+      </div>
+      <div class="time-slot">
+        <div class="time-slot-time">07:00–09:00</div>
+        <div class="time-slot-day">Ish kunlari</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:3px;">✅ O'rtacha</div>
+      </div>
+      <div class="time-slot best">
+        <div class="time-slot-time">Shanba</div>
+        <div class="time-slot-day">19:00–22:00</div>
+        <div style="font-size:10px; color:var(--gold); margin-top:3px;">🔥 ENG YAXSHI</div>
+      </div>
+      <div class="time-slot">
+        <div class="time-slot-time">Yakshanba</div>
+        <div class="time-slot-day">14:00–18:00</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:3px;">✅ Yaxshi</div>
+      </div>
+      <div class="time-slot">
+        <div class="time-slot-time">22:00+</div>
+        <div class="time-slot-day">Har kun</div>
+        <div style="font-size:10px; color:#ff6b6b; margin-top:3px;">❌ Qochish</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Posting chastotasi</div>
+    <div class="tip-item">
+      <span class="tip-icon">🎬</span>
+      <div><strong>Reels:</strong> Haftada 3–5 ta – algorithm uchun eng kuchli. Har kuni post qilish majburiy emas, sifat muhimroq.</div>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🖼️</span>
+      <div><strong>Foto/Carousel:</strong> Haftada 2–3 ta. Carousel eng ko'p save oladi.</div>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">📖</span>
+      <div><strong>Story:</strong> Har kuni 3–7 ta. Story engagement accountni "tirik" ko'rsatadi.</div>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">⚡</span>
+      <div><strong>Post qilgandan keyin:</strong> 30–60 daqiqa onlayn bo'ling, comment larga javob bering — bu dastlabki engagement oshiradi.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📈 Views oshirish — Asosiy qoidalar</div>
+    <div id="checklist">
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle">✓</div>
+        <div>Birinchi 3 soniyada e'tiborni tortadigan narsa bo'lsin (hook) — odamlar scroll qilmasdan to'xtasin</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Reel audio — trending ovoz ishlatish (Instagram muzika qidirish orqali top audio topish)</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Vertical format (9:16) — 1080x1920 px, full screen</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Caption da savol bering — "Sizda ham shunday bo'lganmi?" — comment oshadi</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>20–25 ta hashtag ishlatish — 5 kichik + 10 o'rta + 5–8 katta</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Post qilgandan 1 soat ichida 5+ comment ga javob bering</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Story ga "Yangi post !" deb share qiling</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Subtitr/matn qo'shing — ko'p odam ovoz o'chirib ko'radi</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Location tag qo'shing (Toshkent, O'zbekiston)</div>
+      </div>
+      <div class="checklist-item" onclick="toggleCheck(this)">
+        <div class="check-circle"></div>
+        <div>Cover rasm (thumbnail) jozibali bo'lsin — odamlar bosib kirsin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/script.js"></script>
+</body>
+</html>
